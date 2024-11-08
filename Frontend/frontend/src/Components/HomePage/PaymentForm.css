@@ -1,0 +1,112 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    position: relative; /* Needed to ensure the container sits above the overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px); /* For Safari */
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    z-index: 2; /* Ensure it's above the overlay */
+  }
+  
+  .container form {
+    width: 90%;
+    max-width: 1000px;
+    padding: 40px;
+    background: transparent;
+  }
+  
+  /* Other styles remain unchanged */
+
+form .row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.row .column {
+    flex: 1 1 300px;
+}
+
+.column .title {
+    font-size: 20px;
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.column .input-box {
+    margin: 15px 0;
+}
+
+.input-box span {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.input-box input {
+    width: 100%; /* Set to fill the container */
+    max-width: 300px; /* Optional max width */
+    height: 60px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    border-radius: 10px;
+    outline: none;
+    font-size: 16px;
+    color: #fff;
+    padding: 0 20px;
+    transition: border-color 0.3s;
+}
+
+
+.input-box input::placeholder {
+    color: #d3d3d3;
+}
+
+.column .flex {
+    display: flex;
+    gap: 15px;
+}
+
+.flex .input-box {
+    margin-top: 5px;
+}
+
+.input-box img {
+    height: 50px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    background-color: transparent;
+    filter: drop-shadow(0 0 1px white);
+}
+
+form .btn {
+    margin-top: 5px;
+    width: 100%;
+    padding: 12px;
+    background: white;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    font-size: 17px;
+    color: black;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+form .btn:hover {
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
