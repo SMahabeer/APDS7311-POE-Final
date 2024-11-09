@@ -10,12 +10,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            cd BACKEND
+            cd Backend
             npm install
       - run:
           name: Run Newman tests
           command: |
-            cd BACKEND
+            cd Backend
             npm run test-api &
       - attach_workspace:
           at: ~/workspace
