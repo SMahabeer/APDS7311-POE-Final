@@ -1,6 +1,25 @@
 version: 2.1
 
 jobs:
+  newmantest:
+    docker:
+      - image: cimg/node:18.20.2
+    resource_class: small
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            cd BACKEND
+            npm install
+      - run:
+          name: Run Newman tests
+          command: |
+            cd BACKEND
+            npm run test-api &
+      - attach_workspace:
+          at: ~/workspace
+
   sonarqube:
     working_directory: ~/build
     docker:
@@ -21,6 +40,10 @@ jobs:
           -Dsonar.sources="."
 
 workflows:
-  sonarqubeflow:
+  version: 2
+  build-test-scan:
     jobs:
-      - sonarqube
+      - newmantest
+      - sonarqube:
+          requires:
+            - newmantest
