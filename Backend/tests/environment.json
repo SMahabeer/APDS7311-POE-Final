@@ -14,7 +14,7 @@
       },
       {
         "key": "previousSessionId",
-        "value": "",
+        "value": "https://localhost:3000/csrf-token/",
         "enabled": true
       }
     ]
