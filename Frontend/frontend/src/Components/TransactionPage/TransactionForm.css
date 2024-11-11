@@ -1,114 +1,113 @@
+/* TransactionPage.css */
 .transaction-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    background: transparent;
-    border: 2px solid rgba(255,255,255,.2);
-    backdrop-filter: blur(30px);
-    box-shadow: 0px 0px 10px rgba(0,0,0,.2);
-    color: #ffffff;
-    border-radius:10px;
-    padding:40px;
-    z-index: 2;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,.2);
+  backdrop-filter: blur(30px);
+  box-shadow: 0px 0px 10px rgba(0,0,0,.2);
+  color: #ffffff;
+  border-radius:10px;
+  padding:40px;
+  z-index: 2;
+}
+
+.title {
+  font-size:34px;
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.subtitle {
+  font-size:24px;
+  margin-top:20px;
+}
+
+.transaction-details {
+  display:flex;
+  justify-content:space-between;
+  width:100%;
+  max-width:700px;
+}
+
+.detail-box {
+  width:calc(50% -10px); /* Adjust width for two columns with spacing */
+  margin:20px; /* Consistent margin */
+  padding:15px;
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:10px;
+}
+
+.detail-box span {
+  display:block;
+  font-weight:bold;
+}
+
+.btn {
+  margin-top :50px;
+  padding :12px;
+  background:white;
+  border:none;
+  border-radius :40px;
+  font-size :17px;
+  color:black;
+  cursor:pointer;
+}
+
+.btn:hover {
+  background-color :rgba(255,255,255,.8);
+}
+
+.currency-dropdown {
+  width :100%;
+  height :50px;
+  background:white;
+  border :2px solid rgba(255,255,255,.2);
+  color:black;
+  border-radius :40px;
+}
+
+/* Loading Styles */
+.loading-container {
+  position:absolute; /* Centering the loading state */
+  top :50%;
+  left :50%;
+  transform :translate(-50%, -50%); /* Center it */
+  display:flex;
+  flex-direction :column;
+  align-items:center;
+}
+
+.loading-spinner {
+  border :8px solid rgba(255,255,255,.2); /* Light grey for spinner */
+  border-top :8px solid #3498db; /* Blue for spinner top */
+  border-radius :50%;
+  width :50px; /* Size of the spinner */
+  height :50px; /* Size of the spinner */
+  animation :spin .8s linear infinite; /* Spinner animation */
+}
+
+.loading-text {
+  margin-top :10px; /* Space between spinner and text */
+}
+
+/* Spinner animation keyframes */
+@keyframes spin {
+  from { transform :rotate(0deg); }
+  to { transform :rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width :768px) {
+  .transaction-details {
+    flex-direction :column;
+    align-items:center;
   }
-  
-  .title {
-    font-size:34px; 
-    text-align:center; 
-    margin-bottom:20px; 
+
+  .detail-box {
+    width :90%;
   }
-  
-  .subtitle {
-    font-size:24px; 
-    margin-top:20px; 
-  }
-  
-  .transaction-details,
-  .items-list {
-    display:flex; 
-    justify-content:space-between; 
-    width:100%; 
-    max-width:700px; 
-  }
-  
-  .detail-box,
-  .item-box {
-    width:calc(50% -10px); 
-    margin:20px; 
-    padding:15px; 
-    border:2px solid rgba(255,255,255,.2); 
-    border-radius:10px; 
-  }
-  
-  .detail-box span,
-  .item-box span {
-    display:block; 
-    font-weight:bold; 
-  }
-  
-  .btn {
-    margin-top :50px; 
-    padding :12px; 
-    background:white; 
-    border:none; 
-    border-radius :40px; 
-    font-size :17px; 
-    color:black; 
-    cursor:pointer; 
-  }
-  
-  .btn:hover {
-    background-color :rgba(255,255,255,.8); 
-  }
-  
-  .currency-dropdown {
-    width :100%; 
-    height :50px; 
-    background:white; 
-    border :2px solid rgba(255,255,255,.2); 
-    color:black; 
-    border-radius :40px; 
-  }
-  
-  .loading-container {
-    position:absolute;
-    top :50%; 
-    left :50%; 
-    transform :translate(-50%, -50%);
-    display:flex; 
-    flex-direction :column; 
-    align-items:center; 
-  }
-  
-  .loading-spinner {
-    border :8px solid rgba(255,255,255,.2);
-    border-top :8px solid #3498db;
-    border-radius :50%; 
-    width :50px;
-    height :50px;
-    animation :spin .8s linear infinite;
-  }
-  
-  .loading-text {
-    margin-top :10px;
-  }
-  
-  @keyframes spin {
-    from { transform :rotate(0deg); }
-    to { transform :rotate(360deg); }
-  }
-  
-  @media (max-width :768px) {
-  .transaction-details,
-  .items-list {
-      flex-direction :column; 
-      align-items:center; 
-  }
-  
-  .detail-box,
-  .item-box {
-      width :90%; 
-  }
-  }
+}
