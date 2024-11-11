@@ -55,7 +55,7 @@ jobs:
           name: Start Backend Server
           command: |
             cd ~/project/Backend
-            node test-api &
+            npm run build &
             sleep 10
       - run:
           name: Run Newman Tests
