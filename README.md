@@ -5,6 +5,7 @@
 
 - [Application Description](#application-description)
 - [Team Members](#team-members)
+- [References](#references)
 - [Tech Stack/Framework Used](#tech-stack-used) 
 - [Prerequisites](#prerequisites)
 - [Features](#features)
@@ -39,6 +40,9 @@ This application is an internal international payment system developed for a maj
 - Shivaan Heralall
 - Malekah Luther
 
+## References
+- To reach the final result of this project we used a combination of resources such as ChatGPT (2024) and Claude (2024) to accomplish certain goals. It should be noted that code was changed and not just copied and pasted. An example is our config file which was enhanced by Claude (2024).
+- Another resource we used extensively was Yusuf Paruk's APDS7311 lab guide (2024) which is the property of the IIE.
 
 ## Tech Stack Used
 > [!NOTE]
