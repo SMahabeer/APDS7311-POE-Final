@@ -1,10 +1,10 @@
-{
+  {
     "id": "security-test-env",
     "name": "Security Testing Environment",
     "values": [
       {
         "key": "baseUrl",
-        "value": "https://localhost:3000",
+        "value": "https://localhost:3000/csrf-token/",
         "enabled": true
       },
       {
@@ -19,3 +19,4 @@
       }
     ]
   }
+  
