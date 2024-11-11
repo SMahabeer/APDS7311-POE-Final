@@ -19,7 +19,6 @@ jobs:
           name: Build Backend
           command: |
             cd Backend
-            npm run build
       - persist_to_workspace:
           root: ~/project
           paths:
