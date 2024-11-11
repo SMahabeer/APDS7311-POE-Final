@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "csrf-token",
+			"name": "getToken",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -17,7 +17,7 @@
 			},
 			"response": [
 				{
-					"name": "csrf-token",
+					"name": "getToken",
 					"originalRequest": {
 						"method": "GET",
 						"header": [],
