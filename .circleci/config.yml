@@ -50,7 +50,7 @@ jobs:
           name: Run Newman Tests
           command: |
             cd ~/project/Backend
-            newman run tests/APDS7311.postman_collection.json -e tests/environment.json
+            newman run Backend/tests/APDS7311.postman_collection.json -e Backend/tests/environment.json
       # Additional security tests can be added here
 
   sonarqube:
