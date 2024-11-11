@@ -1,36 +1,41 @@
 {
 	"info": {
-		"_postman_id": "5ac0e3ee-69aa-4cb2-8c60-cf31e46385a9",
-		"name": "APDS7311",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "33416741"
+	  "_postman_id": "5ac0e3ee-69aa-4cb2-8c60-cf31e46385a9",
+	  "name": "APDS7311",
+	  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+	  "_exporter_id": "33416741"
 	},
 	"item": [
-		{
+	  {
+		"name": "getToken",
+		"request": {
+		  "method": "GET",
+		  "header": [],
+		  "url": {
+			"raw": "{{baseUrl}}/csrf-token",
+			"host": ["{{baseUrl}}"],
+			"path": ["csrf-token"]
+		  }
+		},
+		"response": [
+		  {
 			"name": "getToken",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:3000/csrf-token"
-				}
+			"originalRequest": {
+			  "method": "GET",
+			  "header": [],
+			  "url": {
+				"raw": "{{baseUrl}}/csrf-token",
+				"host": ["{{baseUrl}}"],
+				"path": ["csrf-token"]
+			  }
 			},
-			"response": [
-				{
-					"name": "getToken",
-					"originalRequest": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://localhost:3000/csrf-token"
-						}
-					},
-					"_postman_previewlanguage": null,
-					"header": null,
-					"cookie": [],
-					"body": null
-				}
-			]
-		}
+			"_postman_previewlanguage": "json",
+			"header": [],
+			"cookie": [],
+			"body": null
+		  }
+		]
+	  }
 	]
-}
+  }
+  
