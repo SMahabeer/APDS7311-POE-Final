@@ -1,49 +1,150 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@5.1.0
+  newman: postman/newman@1.0.0
+
 jobs:
-  newmantest:
+  security_test:
     docker:
       - image: cimg/node:18.20.2
-    resource_class: small
+        environment:
+          NODE_ENV: test
+          MONGO_URI: mongodb://localhost:27017/test
+          JWT_SECRET: test-secret
+          SESSION_SECRET: test-session-secret
+      - image: mongo:4.4
+        command: mongod --port 27017
+    resource_class: medium
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+          cache-path: ~/project/node_modules
+          override-ci-command: npm install
+      
+      # Install security testing tools
+      - run:
+          name: Install Security Testing Tools
+          command: |
+            sudo npm install -g newman
+            sudo npm install -g snyk
+            sudo npm install -g artillery
+            sudo apt-get update && sudo apt-get install -y nmap
+            
+      # Session Jacking Tests
+      - run:
+          name: Setup Session Security Tests
+          command: |
+            echo '{
+              "name": "Session Security Tests",
+              "values": [
+                {
+                  "key": "baseUrl",
+                  "value": "https://localhost:3000"
+                }
+              ]
+            }' > session-tests-env.json
+            
+      - run:
+          name: Run Session Security Tests
+          command: |
+            newman run security-tests.json --folder "Session Jacking Tests" -e session-tests-env.json
+            
+      # Clickjacking Tests
+      - run:
+          name: Run Clickjacking Security Tests
+          command: |
+            newman run security-tests.json --folder "Clickjacking Protection Tests" -e session-tests-env.json
+            
+      # SQL Injection Tests
+      - run:
+          name: Run SQL Injection Tests
+          command: |
+            newman run security-tests.json --folder "SQL Injection Tests" -e session-tests-env.json
+            
+      # XSS Tests
+      - run:
+          name: Run XSS Protection Tests
+          command: |
+            newman run security-tests.json --folder "XSS Protection Tests" -e session-tests-env.json
+            
+      # MITM Tests
+      - run:
+          name: SSL/TLS Configuration Test
+          command: |
+            nmap -p 443 --script ssl-enum-ciphers localhost || true
+            newman run security-tests.json --folder "Man in the Middle Protection Tests" -e session-tests-env.json
+            
+      # DDoS Protection Tests
+      - run:
+          name: Load Testing for DDoS Protection
+          command: |
+            echo 'config:
+              target: "https://localhost:3000"
+              phases:
+                - duration: 60
+                  arrivalRate: 20
+              defaults:
+                headers:
+                  Content-Type: "application/json"' > load-test.yml
+            artillery run load-test.yml
+            newman run security-tests.json --folder "DDoS Protection Tests" -e session-tests-env.json
+            
+      # Dependency Security Scan
+      - run:
+          name: Snyk Security Scan
+          command: |
+            snyk test || true
+            snyk monitor || true
+            
+      # Store test results
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results
+          destination: security-test-results
+
+  sonarqube:
+    docker:
+      - image: sonarsource/sonar-scanner-cli
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: SonarQube Analysis
           command: |
-            cd Backend
-            npm install
-      - run:
-          name: Run Newman tests
-          command: |
-            cd Backend
-            npm run test-api &
-      - attach_workspace:
-          at: ~/workspace
+            sonar-scanner \
+              -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+              -Dsonar.organization=${SONAR_ORG} \
+              -Dsonar.sources=. \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${SONAR_TOKEN} \
+              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+              -Dsonar.exclusions=**/node_modules/**,**/test/**,**/coverage/** \
+              -Dsonar.security.additional-tests=true
 
-  sonarqube:
-    working_directory: ~/build
+  zap_scan:
     docker:
-      - image: sonarsource/sonar-scanner-cli
-    resource_class: small
+      - image: owasp/zap2docker-stable
     steps:
-      - run: |
-          SONAR_BRANCH="${CIRCLE_BRANCH:-master}"
-          echo "Sonar branch value is: " $SONAR_BRANCH
-          echo "Sonar org value is : "$SONAR_ORG
-          sonar-scanner \
-          -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
-          -Dsonar.organization="$SONAR_ORG" \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.exclusions="**/android/**,**/ios/**" \
-          -Dsonar.login="$SONAR_TOKEN" \
-          -Dsonar.branch.name="$SONAR_BRANCH" \
-          -Dsonar.sources="."
+      - checkout
+      - run:
+          name: ZAP Security Scan
+          command: |
+            mkdir -p /zap/wrk/
+            zap-baseline.py -t https://localhost:3000 -g gen.conf -r zap-report.html || true
+      - store_artifacts:
+          path: zap-report.html
+          destination: zap-report
 
 workflows:
   version: 2
-  build-test-scan:
+  security-pipeline:
     jobs:
-      - newmantest
+      - security_test
       - sonarqube:
           requires:
-            - newmantest
+            - security_test
+      - zap_scan:
+          requires:
+            - security_test
