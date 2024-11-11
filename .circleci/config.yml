@@ -16,7 +16,6 @@ jobs:
           name: Build Backend
           command: |
             cd Backend
-            npm run build
       - persist_to_workspace:
           root: ~/project
           paths:
@@ -45,10 +44,16 @@ jobs:
             sudo npm install -g artillery
             sudo apt-get update && sudo apt-get install -y nmap
       - run:
+          name: Install Backend Dependencies
+          command: |
+            cd ~/project/Backend
+            npm install
+      - run:
           name: Start Backend Server
           command: |
             cd ~/project/Backend
-            npm start &
+            node index.js &
+            sleep 10
       - run:
           name: Run Newman Tests
           command: |
