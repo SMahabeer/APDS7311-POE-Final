@@ -1,5 +1,5 @@
 .container {
-    position: relative;
+    position: relative; /* Needed to ensure the container sits above the overlay */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -7,12 +7,12 @@
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
     backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px); /* For Safari */
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     color: #ffffff;
     border-radius: 10px;
     padding: 25px;
-    z-index: 2;
+    z-index: 2; /* Ensure it's above the overlay */
 }
 
 .container form {
@@ -22,6 +22,7 @@
     background: transparent;
 }
 
+/* Other styles remain unchanged */
 form .row {
     display: flex;
     gap: 15px;
@@ -45,14 +46,15 @@ form .row {
 
 .input-box span {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 10px; /* Space between label and input */
 }
 
+/* General styling for input and select elements */
 .input-box input,
 .input-box select {
-    width: 100%; 
-    max-width: 300px; 
-    height: 60px; 
+    width: 100%; /* Full width within the container */
+    max-width: 300px; /* Ensure consistent width */
+    height: 60px; /* Match height with other input fields */
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
     border-radius: 10px;
@@ -62,35 +64,40 @@ form .row {
     padding-left: 20px;
 }
 
+/* Additional styling for select dropdowns */
 .input-box select {
-    padding: 15px 20px; 
-    -webkit-appearance: none; 
+    padding: 15px 20px; /* Consistent padding for select */
+    -webkit-appearance: none; /* Remove default arrow styling */
     -moz-appearance: none;
     appearance: none;
-    background-color: rgba(255, 255, 255, 0);
-    color: #fff;
-    border: 2px solid rgba(255, 255, 255, .2); 
+    background-color: rgba(255, 255, 255, 0); /* Transparent background */
+    color: #fff; /* White text color */
+    border: 2px solid rgba(255, 255, 255, .2); /* Consistent border */
     border-radius: 10px;
 }
 
+/* Hover and focus states for consistency */
 .input-box select:focus,
 .input-box input:focus {
     outline: none;
-    border: 2px solid rgba(255, 255, 255, .9); 
+    border: 2px solid rgba(255, 255, 255, .9); /* Slightly brighter border on focus */
 }
 
+/* Styling for placeholder text in input fields */
 .input-box input::placeholder,
 .input-box select::placeholder {
     color: #d3d3d3;
 }
 
+/* Flex container for positioning items side by side */
 .column .flex {
     display: flex;
     gap: 15px;
 }
 
+/* Adjustments for smaller elements */
 .flex .input-box {
-    flex: 1; 
+    flex: 1; /* Flex basis for smaller elements */
     margin-top: 5px;
 }
 
