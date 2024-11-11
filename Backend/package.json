@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "node build.js",
-    "test:newman": "newman run tests/APDS7311.postman_collection.json -e tests/environment.json"
+    "test-api": "newman run tests/APDS7311.postman_collection.json --insecure -e tests/environment.json"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -14,6 +14,7 @@
     "express-validator": "^7.2.0",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.8.1"
+    "mongoose": "^8.8.1",
+    "newman": "^6.2.1"
   }
 }

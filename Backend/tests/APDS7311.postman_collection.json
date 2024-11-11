@@ -1,41 +1,234 @@
 {
 	"info": {
-	  "_postman_id": "5ac0e3ee-69aa-4cb2-8c60-cf31e46385a9",
-	  "name": "APDS7311",
-	  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-	  "_exporter_id": "33416741"
+		"_postman_id": "5ac0e3ee-69aa-4cb2-8c60-cf31e46385a9",
+		"name": "APDS7311",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33416741"
 	},
 	"item": [
-	  {
-		"name": "getToken",
-		"request": {
-		  "method": "GET",
-		  "header": [],
-		  "url": {
-			"raw": "{{baseUrl}}/csrf-token",
-			"host": ["{{baseUrl}}"],
-			"path": ["csrf-token"]
-		  }
-		},
-		"response": [
-		  {
+		{
 			"name": "getToken",
-			"originalRequest": {
-			  "method": "GET",
-			  "header": [],
-			  "url": {
-				"raw": "{{baseUrl}}/csrf-token",
-				"host": ["{{baseUrl}}"],
-				"path": ["csrf-token"]
-			  }
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:3000/csrf-token/",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"csrf-token",
+						""
+					]
+				}
 			},
-			"_postman_previewlanguage": "json",
-			"header": [],
-			"cookie": [],
-			"body": null
-		  }
-		]
-	  }
+			"response": [
+				{
+					"name": "getToken",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "HTTPSEnforcement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/create-payment/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"create-payment",
+						""
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "sessionJackingTest",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "email",
+								"value": "michaelj@example.com",
+								"type": "text"
+							},
+							{
+								"key": "password",
+								"value": "",
+								"type": "text"
+							},
+							{
+								"key": "account",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "XSSTest",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "csrf-token",
+						"value": "pDgJwDUp-HK9oJfv3BEx-5YFMpE4h3A8_TS4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"<script>alert('XSS')</script>\",\r\n  \"email\": \"test@example.com\",\r\n  \"description\": \"<img src=x onerror=alert('XSS')>\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:3000/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "XSSTest",
+					"originalRequest": {
+						"method": "GET",
+						"header": []
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "JWT",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "csrf-token",
+						"value": "CfewMFvm-uB-pyj8u-Pn33-9d77VdzP_0qSA",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer InvalidTokenExample123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"fullName\": \"John Doe\",\r\n  \"email\": \"johndoe@example.com\",\r\n  \"address\": \"123 Fake St\",\r\n  \"city\": \"Faketown\",\r\n  \"province\": \"Fake Province\",\r\n  \"zipCode\": \"12345\",\r\n  \"cardName\": \"John Doe\",\r\n  \"cardNumber\": \"4111111111111111\",\r\n  \"expiryMonth\": \"12\",\r\n  \"expiryYear\": \"2024\",\r\n  \"cvv\": \"123\",\r\n  \"amount\": \"100.00\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:3000/create-payment/",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"create-payment",
+						""
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "JWT",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "csrf-token",
+								"value": "CfewMFvm-uB-pyj8u-Pn33-9d77VdzP_0qSA",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer InvalidTokenExample123",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"John Doe\",\r\n  \"email\": \"johndoe@example.com\",\r\n  \"address\": \"123 Fake St\",\r\n  \"city\": \"Faketown\",\r\n  \"province\": \"Fake Province\",\r\n  \"zipCode\": \"12345\",\r\n  \"cardName\": \"John Doe\",\r\n  \"cardNumber\": \"4111111111111111\",\r\n  \"expiryMonth\": \"12\",\r\n  \"expiryYear\": \"2024\",\r\n  \"cvv\": \"123\",\r\n  \"amount\": \"100.00\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/create-payment/",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"create-payment",
+								""
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		}
 	]
-  }
-  
+}

@@ -4,7 +4,7 @@
     "values": [
       {
         "key": "baseUrl",
-        "value": "https://0.0.0.0:3000",
+        "value": "https://localhost:3000",
         "enabled": true
       },
       {
@@ -19,4 +19,6 @@
       }
     ]
   }
+  
+
   
