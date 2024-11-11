@@ -40,7 +40,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/project
-      # Your existing security test steps...
       - run:
           name: Install Security Testing Tools
           command: |
@@ -49,7 +48,7 @@ jobs:
             sudo npm install -g snyk
             sudo npm install -g artillery
             sudo apt-get update && sudo apt-get install -y nmap
-      # Rest of your security test steps...
+      # Additional security tests can be added here
 
   sonarqube:
     docker:
@@ -64,11 +63,10 @@ jobs:
             sonar-scanner \
               -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
               -Dsonar.organization=${SONAR_ORG} \
-              -Dsonar.sources=. \
+              -Dsonar.sources=Backend \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN} \
-              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-              -Dsonar.exclusions=**/node_modules/**,**/test/**,**/coverage/** \
+              -Dsonar.exclusions=Backend/**/node_modules/**,Backend/**/test/**,Backend/**/coverage/** \
               -Dsonar.security.additional-tests=true
 
   zap_scan:
