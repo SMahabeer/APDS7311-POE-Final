@@ -92,7 +92,6 @@ workflows:
   build-test-deploy:
     jobs:
       - build_backend
-      - build_frontend
       - security_test:
           requires:
             - build_backend
