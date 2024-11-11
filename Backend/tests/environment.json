@@ -1,0 +1,21 @@
+{
+    "id": "security-test-env",
+    "name": "Security Testing Environment",
+    "values": [
+      {
+        "key": "baseUrl",
+        "value": "https://localhost:3000",
+        "enabled": true
+      },
+      {
+        "key": "validToken",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZXN0IjoidGVzdCJ9.test",
+        "enabled": true
+      },
+      {
+        "key": "previousSessionId",
+        "value": "",
+        "enabled": true
+      }
+    ]
+  }

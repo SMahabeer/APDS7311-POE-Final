@@ -1,36 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
 import './LoginForm.css';
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaCreditCard } from "react-icons/fa";
 import { MdLock } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
-import { FaCreditCard } from "react-icons/fa6";
+import axios from 'axios';
 
 const LoginPage = ({ onLogin }) => {
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [accountNumber, setAccountNumber] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onLogin(); // Call onLogin to set the logged-in state and navigate
-        //navigate('/transaction'); // Navigate to TransactionPage
+
+        try {
+            const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrfToken=')).split('=')[1];
+            
+            const response = await axios.post('/login', {
+                email,
+                accountNumber,
+                password
+            }, {
+                headers: { 'csrf-token': csrfToken }
+            });
+
+            if (response.status === 200) {
+                onLogin();
+                navigate('/transaction');
+            }
+        } catch (err) {
+            setError(err.response?.data?.msg || "Login failed. Please try again.");
+        }
     };
 
     return (
         <div className='wrapper'>
             <form onSubmit={handleSubmit}>
                 <h1>Login</h1>
-                
+
+                {error && <div className="error-message">{error}</div>}
+
                 <div className="input-box">
-                    <input type="text" placeholder="Username" formNoValidate />
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
                     <FaUser className='icon' />
                 </div>
 
                 <div className="input-box">
-                    <input type="number" placeholder="Account Number" formNoValidate />
-                    <FaCreditCard className='icon' /> 
+                    <input
+                        type="text"
+                        placeholder="Account Number"
+                        value={accountNumber}
+                        onChange={(e) => setAccountNumber(e.target.value)}
+                        required
+                    />
+                    <FaCreditCard className='icon' />
                 </div>
 
                 <div className="input-box">
-                    <input type="password" placeholder="Password" formNoValidate />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
                     <MdLock className='icon' />
                 </div>                  
 
