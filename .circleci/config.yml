@@ -96,7 +96,6 @@ workflows:
       - security_test:
           requires:
             - build_backend
-            - build_frontend
       - sonarqube:
           requires:
             - security_test
