@@ -5,6 +5,46 @@ orbs:
   newman: postman/newman@1.0.0
 
 jobs:
+  build_backend:
+    docker:
+      - image: cimg/node:18.20.2
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+          app-dir: ~/project/Backend
+          cache-path: ~/project/Backend/node_modules
+          override-ci-command: npm install
+      - run:
+          name: Build Backend
+          command: |
+            cd Backend
+            npm run build
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - Backend
+
+  build_frontend:
+    docker:
+      - image: cimg/node:18.20.2
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+          app-dir: ~/project/Frontend/frontend
+          cache-path: ~/project/Frontend/frontend/node_modules
+          override-ci-command: npm install
+      - run:
+          name: Build Frontend
+          command: |
+            cd Frontend/frontend
+            npm run build
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - Frontend
+
   security_test:
     docker:
       - image: cimg/node:18.20.2
@@ -18,28 +58,68 @@ jobs:
     resource_class: medium
     steps:
       - checkout
-      
-      # Install Backend dependencies
-      - node/install-packages:
-          pkg-manager: npm
-          app-dir: ~/project/Backend  # Specify Backend directory
-          cache-path: ~/project/Backend/node_modules
-          override-ci-command: npm install
-
-      # Install Frontend dependencies
-      - node/install-packages:
-          pkg-manager: npm
-          app-dir: ~/project/Frontend/frontend  # Specify Frontend directory
-          cache-path: ~/project/Frontend/frontend/node_modules
-          override-ci-command: npm install
-      
-      # Rest of your security test steps...
-      # Make sure to cd into the correct directory before running tests
+      - attach_workspace:
+          at: ~/project
+      # Your existing security test steps...
       - run:
           name: Install Security Testing Tools
           command: |
-            cd Backend  # Change to Backend directory
+            cd Backend
             sudo npm install -g newman
             sudo npm install -g snyk
             sudo npm install -g artillery
             sudo apt-get update && sudo apt-get install -y nmap
+      # Rest of your security test steps...
+
+  sonarqube:
+    docker:
+      - image: sonarsource/sonar-scanner-cli
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: SonarQube Analysis
+          command: |
+            sonar-scanner \
+              -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+              -Dsonar.organization=${SONAR_ORG} \
+              -Dsonar.sources=. \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${SONAR_TOKEN} \
+              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+              -Dsonar.exclusions=**/node_modules/**,**/test/**,**/coverage/** \
+              -Dsonar.security.additional-tests=true
+
+  zap_scan:
+    docker:
+      - image: owasp/zap2docker-stable
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: ZAP Security Scan
+          command: |
+            mkdir -p /zap/wrk/
+            zap-baseline.py -t https://localhost:3000 -g gen.conf -r zap-report.html || true
+      - store_artifacts:
+          path: zap-report.html
+          destination: zap-report
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - build_backend
+      - build_frontend
+      - security_test:
+          requires:
+            - build_backend
+            - build_frontend
+      - sonarqube:
+          requires:
+            - security_test
+      - zap_scan:
+          requires:
+            - security_test
