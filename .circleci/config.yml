@@ -25,26 +25,6 @@ jobs:
           paths:
             - Backend
 
-  build_frontend:
-    docker:
-      - image: cimg/node:18.20.2
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-          app-dir: ~/project/Frontend/frontend
-          cache-path: ~/project/Frontend/frontend/node_modules
-          override-ci-command: npm install
-      - run:
-          name: Build Frontend
-          command: |
-            cd Frontend/frontend
-            npm run build
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - Frontend
-
   security_test:
     docker:
       - image: cimg/node:18.20.2
