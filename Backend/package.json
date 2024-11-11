@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "node build.js",
+    "build": "node server.js",
     "test-api": "newman run tests/APDS7311.postman_collection.json --insecure -e tests/environment.json"
   },
   "dependencies": {
