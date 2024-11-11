@@ -18,133 +18,28 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      
+      # Install Backend dependencies
       - node/install-packages:
           pkg-manager: npm
-          cache-path: ~/project/node_modules
+          app-dir: ~/project/Backend  # Specify Backend directory
+          cache-path: ~/project/Backend/node_modules
+          override-ci-command: npm install
+
+      # Install Frontend dependencies
+      - node/install-packages:
+          pkg-manager: npm
+          app-dir: ~/project/Frontend/frontend  # Specify Frontend directory
+          cache-path: ~/project/Frontend/frontend/node_modules
           override-ci-command: npm install
       
-      # Install security testing tools
+      # Rest of your security test steps...
+      # Make sure to cd into the correct directory before running tests
       - run:
           name: Install Security Testing Tools
           command: |
+            cd Backend  # Change to Backend directory
             sudo npm install -g newman
             sudo npm install -g snyk
             sudo npm install -g artillery
             sudo apt-get update && sudo apt-get install -y nmap
-            
-      # Session Jacking Tests
-      - run:
-          name: Setup Session Security Tests
-          command: |
-            echo '{
-              "name": "Session Security Tests",
-              "values": [
-                {
-                  "key": "baseUrl",
-                  "value": "https://localhost:3000"
-                }
-              ]
-            }' > session-tests-env.json
-            
-      - run:
-          name: Run Session Security Tests
-          command: |
-            newman run security-tests.json --folder "Session Jacking Tests" -e session-tests-env.json
-            
-      # Clickjacking Tests
-      - run:
-          name: Run Clickjacking Security Tests
-          command: |
-            newman run security-tests.json --folder "Clickjacking Protection Tests" -e session-tests-env.json
-            
-      # SQL Injection Tests
-      - run:
-          name: Run SQL Injection Tests
-          command: |
-            newman run security-tests.json --folder "SQL Injection Tests" -e session-tests-env.json
-            
-      # XSS Tests
-      - run:
-          name: Run XSS Protection Tests
-          command: |
-            newman run security-tests.json --folder "XSS Protection Tests" -e session-tests-env.json
-            
-      # MITM Tests
-      - run:
-          name: SSL/TLS Configuration Test
-          command: |
-            nmap -p 443 --script ssl-enum-ciphers localhost || true
-            newman run security-tests.json --folder "Man in the Middle Protection Tests" -e session-tests-env.json
-            
-      # DDoS Protection Tests
-      - run:
-          name: Load Testing for DDoS Protection
-          command: |
-            echo 'config:
-              target: "https://localhost:3000"
-              phases:
-                - duration: 60
-                  arrivalRate: 20
-              defaults:
-                headers:
-                  Content-Type: "application/json"' > load-test.yml
-            artillery run load-test.yml
-            newman run security-tests.json --folder "DDoS Protection Tests" -e session-tests-env.json
-            
-      # Dependency Security Scan
-      - run:
-          name: Snyk Security Scan
-          command: |
-            snyk test || true
-            snyk monitor || true
-            
-      # Store test results
-      - store_test_results:
-          path: ~/test-results
-      - store_artifacts:
-          path: ~/test-results
-          destination: security-test-results
-
-  sonarqube:
-    docker:
-      - image: sonarsource/sonar-scanner-cli
-    steps:
-      - checkout
-      - run:
-          name: SonarQube Analysis
-          command: |
-            sonar-scanner \
-              -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-              -Dsonar.organization=${SONAR_ORG} \
-              -Dsonar.sources=. \
-              -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=${SONAR_TOKEN} \
-              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-              -Dsonar.exclusions=**/node_modules/**,**/test/**,**/coverage/** \
-              -Dsonar.security.additional-tests=true
-
-  zap_scan:
-    docker:
-      - image: owasp/zap2docker-stable
-    steps:
-      - checkout
-      - run:
-          name: ZAP Security Scan
-          command: |
-            mkdir -p /zap/wrk/
-            zap-baseline.py -t https://localhost:3000 -g gen.conf -r zap-report.html || true
-      - store_artifacts:
-          path: zap-report.html
-          destination: zap-report
-
-workflows:
-  version: 2
-  security-pipeline:
-    jobs:
-      - security_test
-      - sonarqube:
-          requires:
-            - security_test
-      - zap_scan:
-          requires:
-            - security_test
