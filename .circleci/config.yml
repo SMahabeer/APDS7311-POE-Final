@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@5.1.0
+
 jobs:
   build_backend:
     docker:
@@ -20,6 +21,7 @@ jobs:
           root: ~/project
           paths:
             - Backend
+
   security_test:
     docker:
       - image: cimg/node:18.20.2
@@ -40,6 +42,7 @@ jobs:
           command: |
             cd Backend
             sudo npm install -g newman
+            sudo npm install -g newman-reporter-htmlextra
             sudo npm install -g snyk
             sudo npm install -g artillery
             sudo apt-get update && sudo apt-get install -y nmap
@@ -58,8 +61,18 @@ jobs:
           name: Run Newman Tests
           command: |
             cd ~/project/Backend
-            newman run tests/APDS7311.postman_collection.json -e tests/environment.json
-      # Additional security tests can be added here
+            newman run tests/APDS7311.postman_collection.json \
+              -e tests/environment.json \
+              --reporters cli,htmlextra \
+              --reporter-htmlextra-export newman-report.html
+      - store_artifacts:
+          path: ~/project/Backend/newman-report.html
+          destination: newman-reports
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - Backend/newman-report.html
+
   sonarqube:
     docker:
       - image: sonarsource/sonar-scanner-cli
@@ -77,13 +90,18 @@ jobs:
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${SONAR_TOKEN} \
               -Dsonar.exclusions=Backend/**/node_modules/**,Backend/**/test/**,Backend/**/coverage/** \
-              -Dsonar.security.additional-tests=true
+              -Dsonar.security.additional-tests=true \
+              -Dsonar.tests=Backend/tests \
+              -Dsonar.testExecutionReportPaths=Backend/newman-report.html
+
 workflows:
   version: 2
   build-test-deploy:
     jobs:
-      - sonarqube
       - build_backend
       - security_test:
           requires:
             - build_backend
+      - sonarqube:
+          requires:
+            - security_test
