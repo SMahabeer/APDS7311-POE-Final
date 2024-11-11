@@ -12,7 +12,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "https://localhost:3000/csrf-token"
 				}
 			},
 			"response": [
@@ -22,7 +22,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": ""
+							"raw": "https://localhost:3000/csrf-token"
 						}
 					},
 					"_postman_previewlanguage": null,
