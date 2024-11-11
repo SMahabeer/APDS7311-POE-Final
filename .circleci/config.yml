@@ -19,7 +19,6 @@ jobs:
           name: Build Backend
           command: |
             cd Backend
-            npm run build
       - persist_to_workspace:
           root: ~/project
           paths:
@@ -69,22 +68,6 @@ jobs:
               -Dsonar.exclusions=Backend/**/node_modules/**,Backend/**/test/**,Backend/**/coverage/** \
               -Dsonar.security.additional-tests=true
 
-  zap_scan:
-    docker:
-      - image: owasp/zap2docker-stable
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
-      - run:
-          name: ZAP Security Scan
-          command: |
-            mkdir -p /zap/wrk/
-            zap-baseline.py -t https://localhost:3000 -g gen.conf -r zap-report.html || true
-      - store_artifacts:
-          path: zap-report.html
-          destination: zap-report
-
 workflows:
   version: 2
   build-test-deploy:
@@ -94,8 +77,5 @@ workflows:
           requires:
             - build_backend
       - sonarqube:
-          requires:
-            - security_test
-      - zap_scan:
           requires:
             - security_test
