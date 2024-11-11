@@ -1,8 +1,6 @@
 version: 2.1
-
 orbs:
   node: circleci/node@5.1.0
-
 jobs:
   build_backend:
     docker:
@@ -22,7 +20,6 @@ jobs:
           root: ~/project
           paths:
             - Backend
-
   security_test:
     docker:
       - image: cimg/node:18.20.2
@@ -52,7 +49,6 @@ jobs:
             cd ~/project/Backend
             newman run tests/APDS7311.postman_collection.json -e tests/environment.json
       # Additional security tests can be added here
-
   sonarqube:
     docker:
       - image: sonarsource/sonar-scanner-cli
@@ -71,7 +67,6 @@ jobs:
               -Dsonar.login=${SONAR_TOKEN} \
               -Dsonar.exclusions=Backend/**/node_modules/**,Backend/**/test/**,Backend/**/coverage/** \
               -Dsonar.security.additional-tests=true
-
 workflows:
   version: 2
   build-test-deploy:
