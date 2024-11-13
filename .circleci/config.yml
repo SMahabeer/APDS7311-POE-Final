@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
   node: circleci/node@5.1.0
-
 jobs:
   build_backend:
     docker:
@@ -21,7 +20,6 @@ jobs:
           root: ~/project
           paths:
             - Backend
-
   security_test:
     docker:
       - image: cimg/node:18.20.2
@@ -72,7 +70,6 @@ jobs:
           root: ~/project
           paths:
             - Backend/newman-report.html
-
   sonarqube:
     docker:
       - image: sonarsource/sonar-scanner-cli
@@ -81,19 +78,23 @@ jobs:
       - attach_workspace:
           at: ~/project
       - run:
+          name: Create SonarQube Configuration
+          command: |
+            echo "sonar.projectKey=${SONAR_PROJECT_KEY}" > sonar-project.properties
+            echo "sonar.organization=${SONAR_ORG}" >> sonar-project.properties
+            echo "sonar.host.url=https://sonarcloud.io" >> sonar-project.properties
+            echo "sonar.sources=Backend" >> sonar-project.properties
+            echo "sonar.tests=Backend/tests" >> sonar-project.properties
+            echo "sonar.test.inclusions=Backend/tests/**/*.test.js,Backend/tests/**/*.spec.js" >> sonar-project.properties
+            echo "sonar.exclusions=**/build-wrapper-dump.json,Backend/**/node_modules/**,Backend/**/coverage/**,Backend/tests/**/*.json" >> sonar-project.properties
+            echo "sonar.javascript.lcov.reportPaths=Backend/coverage/lcov.info" >> sonar-project.properties
+            echo "sonar.sourceEncoding=UTF-8" >> sonar-project.properties
+      - run:
           name: SonarQube Analysis
           command: |
             sonar-scanner \
-              -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-              -Dsonar.organization=${SONAR_ORG} \
-              -Dsonar.sources=Backend \
-              -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=${SONAR_TOKEN} \
-              -Dsonar.exclusions=Backend/**/node_modules/**,Backend/**/test/**,Backend/**/coverage/** \
-              -Dsonar.security.additional-tests=true \
-              -Dsonar.tests=Backend/tests \
-              -Dsonar.testExecutionReportPaths=Backend/newman-report.html
-
+              -Dsonar.token=${SONAR_TOKEN} \
+              -Dsonar.qualitygate.wait=true
 workflows:
   version: 2
   build-test-deploy:
