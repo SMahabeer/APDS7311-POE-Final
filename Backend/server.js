@@ -268,6 +268,207 @@ app.post('/create-payment', authenticateJWT, [ check('amount').isFloat({ min: 0.
   }
 });
 
+// The below code was adapted from a conversation with Claude (2024)
+const adminSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: String, default: 'admin' }
+});
+
+const employeeSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  department: { type: String, required: true },
+  role: { type: String, default: 'employee' }
+});
+
+const Admin = mongoose.model('Admin', adminSchema);
+const Employee = mongoose.model('Employee', employeeSchema);
+
+const checkRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Unauthorized access' });
+    }
+    next();
+  };
+};
+
+app.post('/admin/login', [
+  check('email').isEmail(),
+  check('password').not().isEmpty()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { email, password } = req.body;
+
+  try {
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign(
+      { id: admin._id, role: admin.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+
+    res.json({ token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.post('/employee/login', [
+  check('email').isEmail(),
+  check('password').not().isEmpty()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { email, password } = req.body;
+
+  try {
+    const employee = await Employee.findOne({ email });
+    if (!employee) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const isMatch = await bcrypt.compare(password, employee.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign(
+      { id: employee._id, role: employee.role, department: employee.department },
+      process.env.JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+
+    res.json({ token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.post('/verify-payment/:transactionId', 
+  authenticateJWT,
+  checkRole(['admin', 'employee']),
+  async (req, res) => {
+    try {
+      const payment = await Payment.findOne({ transactionId: req.params.transactionId });
+      
+      if (!payment) {
+        return res.status(404).json({ message: 'Payment not found' });
+      }
+
+      console.log(`Payment verification attempt for transaction ${req.params.transactionId} by ${req.user.role} ${req.user.id}`);
+
+      res.json({
+        transactionId: payment.transactionId,
+        amount: payment.amount,
+        currency: payment.currency,
+        status: payment.paymentStatus,
+        createdAt: payment.createdAt,
+        customerEmail: payment.email
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.post('/approve-payment/:transactionId',
+  authenticateJWT,
+  checkRole(['admin']),
+  async (req, res) => {
+    try {
+      const payment = await Payment.findOne({ transactionId: req.params.transactionId });
+      
+      if (!payment) {
+        return res.status(404).json({ message: 'Payment not found' });
+      }
+
+      if (payment.paymentStatus === 'Approved') {
+        return res.status(400).json({ message: 'Payment already approved' });
+      }
+
+      payment.paymentStatus = 'Approved';
+      payment.approvedBy = req.user.id;
+      payment.approvedAt = new Date();
+      
+      await payment.save();
+
+      console.log(`Payment ${req.params.transactionId} approved by admin ${req.user.id}`);
+
+      res.json({
+        message: 'Payment approved successfully',
+        transactionId: payment.transactionId,
+        status: payment.paymentStatus
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.post('/reject-payment/:transactionId',
+  authenticateJWT,
+  checkRole(['admin']),
+  [
+    check('reason').not().isEmpty().withMessage('Rejection reason is required')
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const payment = await Payment.findOne({ transactionId: req.params.transactionId });
+      
+      if (!payment) {
+        return res.status(404).json({ message: 'Payment not found' });
+      }
+
+      if (payment.paymentStatus === 'Rejected') {
+        return res.status(400).json({ message: 'Payment already rejected' });
+      }
+
+      payment.paymentStatus = 'Rejected';
+      payment.rejectedBy = req.user.id;
+      payment.rejectedAt = new Date();
+      payment.rejectionReason = req.body.reason;
+      
+      await payment.save();
+
+      console.log(`Payment ${req.params.transactionId} rejected by admin ${req.user.id}`);
+
+      res.json({
+        message: 'Payment rejected successfully',
+        transactionId: payment.transactionId,
+        status: payment.paymentStatus,
+        reason: payment.rejectionReason
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+});
+
 https.createServer(sslOptions, app).listen(PORT, () => {
   console.log(`Secure server running on port ${PORT}`);
 });

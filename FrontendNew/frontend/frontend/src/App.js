@@ -12,6 +12,9 @@ import LoginAdminForm from "./Components/LoginForm/LoginAdminForm";
 import AdminHomeForm from "./Components/Admin/AdminHomeForm";
 import SignupAdminForm from "./Components/SignupForm/SignupAdminForm";
 
+// The updated frontend was built by adapting code from ChatGPT (2024)
+// and the APDS7311 lab guide's frontend section
+
 const App = () => {
     return (
         <Router>
@@ -26,7 +29,7 @@ const App = () => {
                 <Route path="/AdminSignup" element={<SignupAdminForm />} />
                 <Route path="/verifypayment" element={<UnverifiedPayments />} />
                 <Route path="/AdminHome" element={<AdminHomeForm />} />
-                {/* Add other routes as needed */}
+                {}
             </Routes>
         </Router>
     );
