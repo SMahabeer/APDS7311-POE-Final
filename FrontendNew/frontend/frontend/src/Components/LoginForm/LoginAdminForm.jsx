@@ -53,6 +53,7 @@ const LoginForm = () => {
                             value={name} 
                             onChange={(e) => setName(e.target.value)}  // Handle name change
                             required 
+                            formNoValidate
                         />
                         <FaUser className='icon' />
                     </div>
@@ -65,6 +66,7 @@ const LoginForm = () => {
                             value={password} 
                             onChange={(e) => setPassword(e.target.value)}  // Handle password change
                             required 
+                            formNoValidate
                         />
                         <FaLock className='icon' />
                     </div>

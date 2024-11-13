@@ -84,6 +84,7 @@ const LoginPage = ({ onLogin }) => {
                         value={formData.email}
                         onChange={handleChange}
                         required 
+                        formNoValidate
                     />
                     <FaUser className="icon" />
                 </div>
@@ -96,6 +97,7 @@ const LoginPage = ({ onLogin }) => {
                         value={formData.accountNumber}
                         onChange={handleChange}
                         required 
+                        formNoValidate
                     />
                     <FaCreditCard className="icon" />
                 </div>
@@ -108,6 +110,7 @@ const LoginPage = ({ onLogin }) => {
                         value={formData.password}
                         onChange={handleChange}
                         required 
+                        formNoValidate
                     />
                     <MdLock className="icon" />
                 </div>
