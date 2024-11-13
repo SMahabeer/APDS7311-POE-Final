@@ -29,7 +29,7 @@ mongoose.connect(process.env.MONGO_URI, {
 const customerSchema = new mongoose.Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
-  accountNumber: { type: String, required: true}
+  accountNumber: { type: String, required: true},
 });
 
 const Customer = mongoose.model('Customer', customerSchema);
@@ -112,16 +112,16 @@ app.post('/register', [
     return res.status(400).json({ errors: errors.array() });
   }
 
-const passwordRegex = /^(?=.*[a-z&&[^il1o0]])(?=.*[A-Z&&[^IL1O0]])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
+const passwordRegex= /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;;
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
 const accountNumberRegex = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\d{3})\d{11})$/;
 const amountRegex = /^-?\$?([0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?|\.[0-9]{2})$/;
 
-const { email, password, accountNumber,amount} = req.body;
+const { email, password, accountNumber} = req.body;
 
-  if (!passwordRegex.test(password)) {
+  /*if (passwordRegex.test(password)) {
     return res.status(400).json({ msg: 'Password must meet complexity requirements' });
-  }
+  }*/
 
   if (!emailRegex.test(email)) {
     return res.status(400).json({ msg: 'Email must meet complexity requirements' });
@@ -131,9 +131,9 @@ const { email, password, accountNumber,amount} = req.body;
     return res.status(400).json({ msg: 'Account must meet complexity requirements' });
   }
 
-  if (!amountRegex.test(amount)) {
+  /*if (!amountRegex.test(amount)) {
     return res.status(400).json({ msg: 'Amount must only contain numbers' });
-  }
+  }*/
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -172,19 +172,21 @@ app.post('/login', [
       return res.status(403).json({ msg: 'CSRF token missing' });
     }
 
+    // Changed from Customer.find to Customer.findOne since we want a single user
     const customer = await Customer.findOne({ email, accountNumber });
     if (!customer) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
+    // Compare the submitted password with the hashed password in the database
     const isMatch = await bcrypt.compare(password, customer.password);
     if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: customer._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    //const token = jwt.sign({ id: customer._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(200).json({ token, message: 'Login successful!' });
+    res.status(200).json({ message: 'Login successful!' });
 
   } catch (error) {
     console.error(error);

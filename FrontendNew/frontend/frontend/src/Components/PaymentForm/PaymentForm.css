@@ -1,0 +1,223 @@
+/* Wrapper styling with padding and border */
+.payment-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px; /* Adding padding */
+    border: 2px solid #ccc; /* Adding border */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adding shadow for a subtle 3D effect */
+    background-color: #fff; /* Background color */
+}
+
+
+
+/* Form input styling */
+.input-box {
+    margin-bottom: 20px;
+}
+
+.input-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Button styling */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Style for the input box */
+.input-box {
+    position: relative;
+}
+
+/* Style for the select element */
+.input-box select {
+    width: 100%;
+    padding: 12px 20px; /* Adjust padding for better spacing */
+    border: 2px solid #000000; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    background-color: transparent; /* Set the background to transparent */
+    font-size: 16px; /* Font size */
+    color: #000000; /* Text color */
+    appearance: none; /* Remove default styling */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007bff"><path d="M7 10l5 5 5-5H7z"/></svg>'); /* Custom dropdown arrow */
+    background-repeat: no-repeat; /* Prevent background repeat */
+    background-position: right 10px center; /* Position the arrow */
+    background-size: 1.2em; /* Size of the arrow */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* Change styles on focus */
+.input-box select:focus {
+    border-color: #000000; /* Darker border on focus */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Shadow effect */
+    outline: none; /* Remove outline */
+}
+
+/* Style for the icon */
+.input-box .icon {
+    position: absolute;
+    right: 15px; /* Position the icon */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    color: #000000; /* Icon color */
+    font-size: 20px; /* Icon size */
+    pointer-events: none; /* Prevent interaction */
+}
+
+/* Option styling (customizing dropdown options is limited) */
+.input-box select option {
+    background-color: transparent; /* Background for options (limited control) */
+    color: #000; /* Text color for options */
+}
+
+/* Styles for the view account number button */
+.view-account-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px 12px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto; /* Allow the button to size based on content */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.view-account-btn:hover {
+    background-color: #45a049;
+}
+
+/* Styles for the account number box */
+.account-box {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    width: 250px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.account-box-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+}
+
+.account-box-header p {
+    margin: 0;
+}
+
+.close-btn {
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;           /* Add this */
+    justify-content: center; /* Add this */
+    align-items: center;     /* Add this */
+    padding: 0;              /* Add this */
+    line-height: 1;          /* Add this */
+}
+.close-btn:hover {
+    background-color: red;
+}
+
+.account-box-body {
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Logout Button Styling */
+.logout-btn {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    padding: 8px 12px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto; /* Allow the button to size based on content */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+}
+
+.logout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.logout-modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logout-modal-content h2 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.logout-modal-content p {
+    font-size: 1rem;
+    color: #777;
+}
+
+

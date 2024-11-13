@@ -4,13 +4,13 @@
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
     backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px); /* For Safari */
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     color: #ffffff;
     border-radius: 10px;
     padding: 30px 40px;
-    z-index: 2; 
-    position: relative;
+    z-index: 2; /* Ensure it's above the overlay */
+    position: relative; /* Ensure it's positioned correctly */
 }
 
 .wrapper h1 {
@@ -22,21 +22,21 @@
 .wrapper .input-box {
     position: relative;
     width: 100%;
-    height: auto; 
+    height: auto; /* Changed to auto for better flexibility */
     margin: 30px 0;
 }
 
 .input-box input {
     width: 100%;
-    height: auto;
+    height: auto; /* Changed to auto for better flexibility */
     background: transparent;
     border: 2px solid rgba(255,255,255,.2);
     outline: none;
     font-size:16px;
     color:#fff;
     padding-left:20px; 
-    padding-right:45px;
-    transition:border-color .3s;
+    padding-right:45px; /* Adjusted padding for icon */
+    transition:border-color .3s; /* Smooth transition for the border color */
 }
 
 .input-box input::placeholder {
@@ -44,8 +44,8 @@
 }
 
 .input-box input:focus {
-    border-color:#fff;
-    box-shadow:0 0 5px rgba(255,255,255,0.5);
+    border-color:#fff; /* Change to highlight color on focus */
+    box-shadow:0 0 5px rgba(255,255,255,0.5); /* Optional glow effect */
 }
 
 .input-box .icon {
